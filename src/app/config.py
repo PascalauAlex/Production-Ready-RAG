@@ -8,6 +8,12 @@ ENV_LOCATION = WORKDIR / ".env"
 
 
 class Settings(BaseSettings):
+    """
+        Main application settings.
+        Pydantic validates required fields and types on instantiation, so
+        missing API_KEYS fails at startup rather than first LLM call.
+    """
+
     model_config = SettingsConfigDict(env_file=ENV_LOCATION,extra="ignore")
 
     # LLM Configuration
