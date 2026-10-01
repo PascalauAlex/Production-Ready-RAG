@@ -7,36 +7,35 @@ import logging
 import json
 import time
 from datetime import datetime, timezone
-from functools import wraps
 from logging import LogRecord
-from typing import Any, Callable
 
+from pygments.lexers import data
 
 
 # === Structured JSON Logger ===
 
 class JSONFormatter(logging.Formatter):
-    """ Format log records as JSON for log aggregation (ELK, Datalog, etc.) """
+    """Format log records as JSON for log aggregation (ELK, Datadog, etc.)."""
 
-    def format(self, record : LogRecord):
+    def format(self, record):
         log_obj = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "level":record.levelname,
-            "message":record.getMessage(),
-            "module":record.module,
-            "function": record.funcName
+            "level": record.levelname,
+            "message": record.getMessage(),
+            "module": record.module,
+            "function": record.funcName,
         }
         # Merge any extra data attached to the record
-
-        if hasattr(record,"extra_data"):
+        if hasattr(record, "extra_data"):
             log_obj.update(record.extra_data)
         return json.dumps(log_obj)
 
-def get_logger(name : str = "production-api")-> logging.Logger:
-    """ Create a structured JSON logger. """
-    logger = logging.Logger(name) # Create a logger or use one if already exists with the specified name
 
-    if not logger.handlers():
+def get_logger(name: str = "production-api") -> logging.Logger:
+    """Create a structured JSON logger."""
+    logger = logging.getLogger(name)
+
+    if not logger.handlers:
         handler = logging.StreamHandler()
         handler.setFormatter(JSONFormatter())
         logger.addHandler(handler)
@@ -113,6 +112,18 @@ class MetricsCollector:
             "total_input_tokens": self._tokens_input,
             "total_output_tokens": self._tokens_output,
         }
+
+# === Request Timer (utility) ===
+
+class RequestTimer:
+    """Context manager for timing requests."""
+
+    def __enter__(self):
+        self.start = time.time()
+        return self
+
+    def __exit__(self, *args):
+        self.elapsed_ms = (time.time() - self.start) * 1000
 
 
 
