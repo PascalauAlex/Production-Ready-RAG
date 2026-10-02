@@ -22,9 +22,9 @@ class Settings(BaseSettings):
     fallback_model : str = "gpt-4o-mini"
 
     # LangSmith
-    langchain_tracing : bool = True
+    langsmith_tracing : bool = True
     langsmith_api_key : str = ""
-    langchain_project : str = "production-api"
+    langsmith_project : str = "production-api"
 
     # Application
     app_env : str = "development"

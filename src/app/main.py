@@ -13,15 +13,18 @@ Wires together:
 
 import time
 import os
-from contextlib import asynccontextmanager
 
+from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from langsmith import traceable
-from dotenv import load_dotenv
+
+
 
 from app.config import get_settings
 from app.models import (
@@ -33,7 +36,7 @@ from app.cache import ResponseCache
 from app.monitoring import get_logger, MetricsCollector, RequestTimer
 from app.agent import ProductionAgent
 
-load_dotenv()
+
 
 
 
@@ -56,11 +59,11 @@ async def lifespan(app: FastAPI):
     global security, cache, metrics, agent
 
     settings = get_settings()
-
+    print("="*150)
     logger.info("Starting production API...", extra={"extra_data": {
         "environment": settings.app_env,
         "primary_model": settings.primary_model,
-        "tracing_enabled": settings.langchain_tracing,
+        "tracing_enabled": settings.langsmith_tracing,
     }})
 
     # Initialize components
@@ -249,3 +252,51 @@ async def get_metrics():
 async def cache_stats():
     """Cache performance statistics."""
     return cache.stats
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

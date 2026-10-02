@@ -7,9 +7,9 @@ import logging
 import json
 import time
 from datetime import datetime, timezone
-from logging import LogRecord
 
-from pygments.lexers import data
+
+
 
 
 # === Structured JSON Logger ===
